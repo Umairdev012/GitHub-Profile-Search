@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="DevFinder helps you search GitHub profiles, view repos, followers, following, and compare developers." />
+  <meta name="theme-color" content="#0d1117" />
+  <title>DevFinder | GitHub Profile Search</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body class="dark-mode">
+  <header class="app-navbar">
+    <div class="brand-group">
+      <span class="brand-icon"><i class="fa-brands fa-github"></i></span>
+      <div>
+        <h1>DevFinder</h1>
+        <p>GitHub profile search</p>
+      </div>
+    </div>
+    <div class="navbar-actions">
+      <button class="btn btn-secondary" id="compare-toggle" type="button">Compare</button>
+      <button class="icon-button" id="theme-toggle" type="button" aria-label="Toggle theme">
+        <i class="fa-solid fa-moon"></i>
+      </button>
+      <div class="rate-badge" id="nav-rate-limit">60</div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero-section">
+      <div class="hero-copy">
+        <h2>Explore GitHub Profiles</h2>
+        <p>Search any GitHub user instantly</p>
+      </div>
+      <form id="search-form" class="search-form" novalidate>
+        <div class="search-input-wrap">
+          <span class="input-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+          <input id="search-input" type="text" name="username" placeholder="Enter GitHub username..." autocomplete="off" aria-label="GitHub username" />
+          <button class="input-clear" type="button" id="search-clear" aria-label="Clear input"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <button class="btn btn-primary" id="search-button" type="submit">Search</button>
+      </form>
+      <div class="suggestions-panel" id="search-suggestions" aria-label="Search suggestions"></div>
+      <div class="search-status">
+        <div class="spinner hidden" id="loading-spinner" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="validation-message hidden" id="validation-message"></div>
+      </div>
+    </section>
+
+    <section class="history-panel" id="history-panel">
+      <div class="history-header">
+        <h3>Recent searches</h3>
+        <button class="btn-link" id="clear-history" type="button">Clear All History</button>
+      </div>
+      <div class="history-cards" id="history-cards"></div>
+    </section>
+
+    <section class="error-state hidden" id="error-state"></section>
+
+    <section class="profile-section hidden" id="profile-section">
+      <div class="profile-grid">
+        <aside class="profile-card" id="profile-card"></aside>
+        <div class="profile-details">
+          <div class="tabs-bar">
+            <button class="tab-button active" data-tab="repos">Repositories</button>
+            <button class="tab-button" data-tab="followers">Followers</button>
+            <button class="tab-button" data-tab="following">Following</button>
+            <button class="tab-button" data-tab="stats">Stats</button>
+          </div>
+          <div class="tab-controls">
+            <div class="sort-block">
+              <label for="repo-sort">Sort by</label>
+              <select id="repo-sort">
+                <option value="stars">Stars</option>
+                <option value="forks">Forks</option>
+                <option value="updated">Updated</option>
+                <option value="name">Name</option>
+              </select>
+            </div>
+          </div>
+          <div class="tab-content active" id="tab-repos">
+            <div class="repo-grid" id="repo-grid"></div>
+            <button class="btn btn-secondary hidden" id="load-more-button" type="button">Load More</button>
+          </div>
+          <div class="tab-content" id="tab-followers">
+            <div class="follow-count" id="followers-count"></div>
+            <div class="follow-grid" id="followers-grid"></div>
+          </div>
+          <div class="tab-content" id="tab-following">
+            <div class="follow-count" id="following-count"></div>
+            <div class="follow-grid" id="following-grid"></div>
+          </div>
+          <div class="tab-content" id="tab-stats">
+            <div class="stats-summary">
+              <div class="chart-card">
+                <h4>Most Used Languages</h4>
+                <div class="language-chart" id="language-chart"></div>
+              </div>
+              <div class="activity-card" id="activity-summary"></div>
+              <div class="completeness-card">
+                <h4>Profile completeness</h4>
+                <div class="circle-progress" id="completeness-chart">
+                  <span class="progress-value" id="completeness-value">0%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="compare-section hidden" id="compare-section">
+      <div class="compare-header">
+        <h3>Compare GitHub Profiles</h3>
+        <button class="btn btn-secondary" id="exit-compare" type="button">Exit Compare</button>
+      </div>
+      <div class="compare-grid">
+        <div class="compare-panel">
+          <label for="compare-user-1">User 1</label>
+          <input id="compare-user-1" type="text" placeholder="Search username" />
+          <button class="btn btn-primary" id="compare-search-1" type="button">Search</button>
+          <div class="compare-card" id="compare-card-1"></div>
+        </div>
+        <div class="compare-panel">
+          <label for="compare-user-2">User 2</label>
+          <input id="compare-user-2" type="text" placeholder="Search username" />
+          <button class="btn btn-primary" id="compare-search-2" type="button">Search</button>
+          <div class="compare-card" id="compare-card-2"></div>
+        </div>
+      </div>
+      <div class="comparison-table-wrap hidden" id="comparison-table-wrap">
+        <table class="comparison-table" id="comparison-table">
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>User 1</th>
+              <th>User 2</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>Built with <span aria-hidden="true">❤️</span> using GitHub API</p>
+    <p><span id="footer-limit">60</span> / 60 requests remaining · <a href="https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting" target="_blank" rel="noopener noreferrer">API docs</a></p>
+    <p><a href="https://github.com/" target="_blank" rel="noopener noreferrer">Your Name</a></p>
+  </footer>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" crossorigin="anonymous"></script>
+  <script src="js/api.js"></script>
+  <script src="js/profile.js"></script>
+  <script src="js/repos.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
